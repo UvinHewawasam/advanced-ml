@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "serverless": "^3.40.0"
+  },
+  "name": "week04"
+}
