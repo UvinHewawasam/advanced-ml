@@ -12,3 +12,6 @@ _pycache__/
 
 .env
 .env.*
+
+*.joblib
+__pycache__/
