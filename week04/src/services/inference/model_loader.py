@@ -26,11 +26,25 @@ def get_model():
     if _model is None:
         try:
             s3_client = _get_s3_client()
-            response = s3_client.get_object(Bucket=MODEL_BUCKET_NAME, Key=MODEL_OBJECT_KEY)
+            response = s3_client.get_object(
+                Bucket=MODEL_BUCKET_NAME, 
+                Key=MODEL_OBJECT_KEY
+            )
             model_data = response["Body"].read()
             buffer = io.BytesIO(model_data)
             _model = joblib.load(buffer)
-        except (BotoCoreError, ClientError) as e:
+        except ClientError as e:
+            error_code = e.response.get("Error", {}).get("Code", "Unknown")
+            logger.exception(
+                "S3 model loading failed. Error code: %s, bucket: %s, key: %s",
+                error_code,
+                MODEL_BUCKET_NAME,
+                MODEL_OBJECT_KEY,
+            )
+            raise ModelLoadError(
+                f"Failed to load model from S3: {error_code}"
+            ) from e
+        except (BotoCoreError) as e:
             logger.error(f"Failed to load model from S3: {e}")
             raise ModelLoadError("Failed to load model from S3") from e
         except Exception as e:
@@ -43,5 +57,8 @@ def get_model():
 def _get_s3_client():
     global _s3_client
     if _s3_client is None:
-        _s3_client = boto3.client("s3")
+        _s3_client = boto3.client(
+            "s3", 
+            region_name="us-east-1"
+        )
     return _s3_client

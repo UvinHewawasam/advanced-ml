@@ -8,7 +8,7 @@ class PredictRequest(BaseModel):
     weight: float = Field(..., gt=0)
     acceleration: float = Field(..., gt=0)
     model_year: int = Field(..., ge=0, le=99)
-    origin: str = Field(..., min_length=1)
+    origin: int = Field(...)
 
 class PredictResponse(BaseModel):
     predicted_mpg: float

@@ -27,7 +27,8 @@ provider:
         - Effect: "Allow"
           Action:
             - "s3:GetObject"
-          Resource: "arn:aws:s3:::inference-${self:custom.modelBucketName}/${self:custom.modelObjectKey}"
+          # Resource: "arn:aws:s3:::inference-${self:custom.modelBucketName}/${self:custom.modelObjectKey}"
+          Resource: "*"
 
 custom:
   modelBucketName: inference-${sls:stage}-linear-regression-models-898059392798
